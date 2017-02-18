@@ -150,30 +150,30 @@ $('.signup-button').click(function(e) {
 
 ## Built-In Validations
 
-### `FormHelper.validations.notEmpty()`
+### `notEmpty()`
 
 Passes if the value is not an empty string.
 
-### `FormHelper.validations.isAlpha()`
+### `isAlpha()`
 
 Passes if the value contains only alpha characters.
 
-### `FormHelper.validations.isNumeric()`
+### `isNumeric()`
 
 Passes if the value contains only numeric characters.
 
-### `FormHelper.validations.isAlphaNumeric()`
+### `isAlphaNumeric()`
 
 Passes if the value contains only alpha and numeric characters.
 
-### `FormHelper.validations.hasLength(length)`
+### `hasLength(length)`
 
 Passes if the value has the specified length.
 
-### `FormHelper.validations.minLength(length)`
+### `minLength(length)`
 
 Passes if the value has at least the specified length.
 
-### `FormHelper.validations.maxLength(length)`
+### `maxLength(length)`
 
 Passes if the value has at most the specified length.
