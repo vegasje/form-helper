@@ -9,12 +9,12 @@ The following example shows how to quickly set up and validate a login form.
 Our validations require that both the email and password form fields are at least 4 characters in length.
 
 ```html
-	<form class="login-form">
-		<input name="email" type="text" /><br />
-		<input name="password" type="password" /><br />
-		<br />
-		<a class="login-button" href="#">Login</a>
-	</form>
+<form class="login-form">
+	<input name="email" type="text" /><br />
+	<input name="password" type="password" /><br />
+	<br />
+	<a class="login-button" href="#">Login</a>
+</form>
 ```
 
 ```javascript
@@ -55,24 +55,24 @@ The default settings also check to see if the input is wrapped in a `<fieldset>`
 The following example shows how to create a highly-customized signup form.
 
 ```html
-	<form class="signup-form">
-		<div class="field-wrapper">
-			<label>Enter your email address</label>
-			<input name="email" type="text" />
-		</div>
+<form class="signup-form">
+	<div class="field-wrapper">
+		<label>Enter your email address</label>
+		<input name="email" type="text" />
+	</div>
 
-		<div class="field-wrapper">
-			<label>Enter your password</label>
-			<input name="password1" type="password" />
-		</div>
+	<div class="field-wrapper">
+		<label>Enter your password</label>
+		<input name="password1" type="password" />
+	</div>
 
-		<div class="field-wrapper">
-			<label>Confirm your password</label>
-			<input name="password2" type="password" />
-		</div>
-		
-		<a class="signup-button" href="#">Create Account</a>
-	</form>
+	<div class="field-wrapper">
+		<label>Confirm your password</label>
+		<input name="password2" type="password" />
+	</div>
+	
+	<a class="signup-button" href="#">Create Account</a>
+</form>
 ```
 
 ```javascript
@@ -144,6 +144,40 @@ $('.signup-button').click(function(e) {
 	// 	email:    'name@email.com',
 	// 	password1: 'mypassword',
 	// 	password2: 'mypassword'
+	// }
+});
+```
+
+## Form Elements With Multiple Values
+
+The `currentState` method is capable of generating lists of values if the name of the form elements have the same name and end with `[]`.
+
+```html
+<form class="friends-form">
+	<label>Enter up to 3 names of your friends.</label>
+	<input name="friends[]" type="text" /><br />
+	<input name="friends[]" type="text" /><br />
+	<input name="friends[]" type="text" /><br />
+	<br />
+	<a class="friends-button" href="#">Login</a>
+</form>
+```
+
+```javascript
+friendsFormHelper = $('.friends-form').FormHelper();
+
+$('.friends-button').click(function(e) {
+	e.preventDefault();
+
+	var state = friendsFormHelper.currentState();
+
+	// state now contains a JSON representation of the form data:
+	// {
+	// 	friends: [
+	// 		'sally',
+	// 		'jane',
+	// 		'paul'
+	// 	]
 	// }
 });
 ```
