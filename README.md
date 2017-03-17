@@ -76,7 +76,7 @@ The following example shows how to create a highly-customized signup form.
 ```
 
 ```javascript
-var signupFormHelper = $('.login-form').FormHelper({
+var signupFormHelper = $('.signup-form').FormHelper({
 	// The global `onFail` method runs whenever any field fails validation.
 	// `this` represents the field.
 	onFail: function() {
@@ -164,7 +164,7 @@ The `currentState` method is capable of generating lists of values if the name o
 ```
 
 ```javascript
-friendsFormHelper = $('.friends-form').FormHelper();
+var friendsFormHelper = $('.friends-form').FormHelper();
 
 $('.friends-button').click(function(e) {
 	e.preventDefault();

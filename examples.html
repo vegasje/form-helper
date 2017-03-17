@@ -1,0 +1,207 @@
+<!doctype html>
+<html>
+	<head>
+		<title>FormHelper Examples</title>
+
+		<style>
+			.error {
+				border: 1px solid #f00;
+			}
+			.success {
+				border: 1px solid #0f0;
+			}
+			.example {
+				margin-bottom: 30px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="example">
+			Example 1: Simple Login Form
+			<form class="login-form">
+				<input name="email" type="text" value="aaaa" /><br />
+				<input name="password" type="password" value="bbbb" /><br />
+				<button class="login-button">Login</button>
+			</form>
+		</div>
+
+		<div class="example">
+			Example 2: Custom Signup Form
+			<form class="signup-form">
+				<div class="field-wrapper">
+					<label>Enter your email address</label>
+					<input name="email" type="text" value="a@aaa.com" />
+				</div>
+
+				<div class="field-wrapper">
+					<label>Enter your password</label>
+					<input name="password1" type="password" value="aaaa" />
+				</div>
+
+				<div class="field-wrapper">
+					<label>Confirm your password</label>
+					<input name="password2" type="password" value="aaaa" />
+				</div>
+				
+				<button class="signup-button">Create Account</button>
+			</form>
+		</div>
+
+		<div class="example">
+			Example 3: Friends Form With Array Values
+			<form class="friends-form">
+				<label>Enter up to 3 names of your friends.</label><br />
+				<input name="friends[]" type="text" value="aaa" /><br />
+				<input name="friends[]" type="text" value="bbb" /><br />
+				<input name="friends[]" type="text" value="ccc" /><br />
+				<button class="friends-button">Login</button>
+			</form>
+		</div>
+
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+		<script src="lib/form-helper.js"></script>
+
+		<script>
+			var loginHelper = $('.login-form').FormHelper({
+				fields: {
+					email: {
+						validate: [FormHelper.validations.minLength(4)]
+					},
+					password: {
+						validate: [FormHelper.validations.minLength(4)]
+					}
+				}
+			});
+
+			$('.login-button').click(function(e) {
+				e.preventDefault();
+				if (!loginHelper.validate()) return;
+				var state = loginHelper.currentState();
+
+				if (state.email !== $('.login-form [name="email"]').val()) {
+					$(this).parents('.example').addClass('error');
+					return;
+				}
+
+				$(this).parents('.example').removeClass('error').addClass('success');
+			});
+
+			var signupHelper = $('.signup-form').FormHelper({
+				// The global `onFail` method runs whenever any field fails validation.
+				// `this` represents the field.
+				onFail: function() {
+					$(this).parent().addClass('error');
+				},
+
+				// The global `onPass` method runs whenever any field passes validation.
+				// `this` represents the field.
+				onPass: function() {
+					$(this).parent().removeClass('error');
+				},
+
+				fields: {
+					email: {
+						validate: [
+							FormHelper.validations.minLength(4),
+
+							// This validation ensures that the email address has an @ symbol in it.
+							function(value) {
+								return (value.indexOf('@') !== -1);
+							}
+						]
+					},
+
+					password1: {
+						validate: [FormHelper.validations.minLength(4)]
+					},
+
+					password2: {
+						validate: [
+							FormHelper.validations.minLength(4),
+
+							// This validation verifies that the passwords match.
+							function(value) {
+								return (value === $('[name="password1"]').val());
+							}
+						],
+
+						// When `password2` fails to validate, highlight both password1 and password2 fields.
+						onFail: function() {
+							$('[name="password1"]').parent().addClass('error');
+							$(this).parent().addClass('error');
+						},
+
+						// When `password2` validates, remove any highlights on password1 and password2 fields.
+						onPass: function() {
+							$('[name="password1"]').parent().removeClass('error');
+							$(this).parent().removeClass('error');
+						}
+					}
+				}
+			});
+
+			$('.signup-button').click(function(e) {
+				e.preventDefault();
+				if (!signupHelper.validate()) return;
+				var state = signupHelper.currentState();
+
+				if (state.email !== $('.signup-form [name="email"]').val()) {
+					$(this).parents('.example').addClass('error');
+					return;
+				}
+
+				if (state.password1 !== $('.signup-form [name="password1"]').val()) {
+					$(this).parents('.example').addClass('error');
+					return;
+				}
+
+				if (state.password2 !== $('.signup-form [name="password2"]').val()) {
+					$(this).parents('.example').addClass('error');
+					return;
+				}
+
+				$(this).parents('.example').removeClass('error').addClass('success');
+			});
+
+			var friendsHelper = $('.friends-form').FormHelper();
+
+			$('.friends-button').click(function(e) {
+				e.preventDefault();
+				var state = friendsHelper.currentState();
+				var $friends = $('.friends-form [name="friends[]"]');
+
+				if (state.friends.length !== $friends.length) {
+					$(this).parents('.example').addClass('error');
+					return;
+				}
+
+				var success = true;
+
+				$friends.each(function() {
+					var $friend = $(this);
+					var found = false;
+
+					for (var i = 0; i < state.friends.length; i++) {
+						if (state.friends[i] === $friend.val()) {
+							found = true;
+							break;
+						}
+					}
+
+					if (!found) {
+						success = false;
+						return false;
+					}
+				});
+
+				if (!success) {
+					$(this).parents('.example').addClass('error');
+					return;
+				}
+
+				$(this).parents('.example').removeClass('error').addClass('success');
+			});
+		</script>
+	</body>
+</html>
