@@ -182,6 +182,44 @@ $('.friends-button').click(function(e) {
 });
 ```
 
+## Forms With Ignored Fields
+
+Sometimes you will have certain elements in your forms that you would like to ignore when fetching the form's state with `currentState`.  The `ignored` configuration option allows you to accomplish this.
+
+`ignored` is an array.  It accepts strings, which ignore based on the name of the field, as well as objects, which ignore based on a jQuery selector.  The following example showcases both methods.
+
+```html
+<form class="ignored-form">
+	<input class="ignored" name="ignored1" type="hidden" value="test ignore 1" />
+	<input class="ignored" name="ignored2" type="hidden" value="test ignore 2" />
+	<label>City</label> <input name="city" value="Walnut Creek" /><br />
+	<label>State</label> <input name="state" value="CA" /><br />
+	<label>Country</label> <input name="country" value="USA" /><br />
+	<button class="ignored-button">Test</button>
+</form>
+```
+
+```javascript
+var ignoredFormHelper = $('.ignored-form').FormHelper({
+	ignored: [
+		{ selector: '.ignored' },
+		'country'
+	]
+});
+
+$('.ignored-button').click(function(e) {
+	e.preventDefault();
+	
+	var state = ignoredFormHelper.currentState();
+
+	// state now contains a JSON representation of the form data:
+	// {
+	// 	city: 'Walnut Creek',
+	// 	state: 'CA'
+	// }
+});
+```
+
 ## Built-In Validations
 
 ### `notEmpty()`

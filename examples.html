@@ -59,6 +59,18 @@
 			</form>
 		</div>
 
+		<div class="example">
+			Example 4: Ignoring Form Fields
+			<form class="ignored-form">
+				<input class="ignored" name="ignored1" type="hidden" value="test ignore 1" />
+				<input class="ignored" name="ignored2" type="hidden" value="test ignore 2" />
+				<label>City</label> <input name="city" value="Walnut Creek" /><br />
+				<label>State</label> <input name="state" value="CA" /><br />
+				<label>Country</label> <input name="country" value="USA" /><br />
+				<button class="ignored-button">Test</button>
+			</form>
+		</div>
+
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 		<script src="lib/form-helper.js"></script>
 
@@ -196,6 +208,35 @@
 				});
 
 				if (!success) {
+					$(this).parents('.example').addClass('error');
+					return;
+				}
+
+				$(this).parents('.example').removeClass('error').addClass('success');
+			});
+
+			var ignoredHelper = $('.ignored-form').FormHelper({
+				ignored: [
+					{ selector: '.ignored' },
+					'country'
+				]
+			});
+
+			$('.ignored-button').click(function(e) {
+				e.preventDefault();
+				var state = ignoredHelper.currentState();
+
+				if (state.ignored1 || state.ignored2 || state.country) {
+					$(this).parents('.example').addClass('error');
+					return;
+				}
+
+				if (state.city !== $('.ignored-form [name="city"]').val()) {
+					$(this).parents('.example').addClass('error');
+					return;
+				}
+
+				if (state.state !== $('.ignored-form [name="state"]').val()) {
 					$(this).parents('.example').addClass('error');
 					return;
 				}
