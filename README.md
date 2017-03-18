@@ -10,8 +10,8 @@ Our validations require that both the email and password form fields are at leas
 
 ```html
 <form class="login-form">
-	<input name="email" type="text" /><br />
-	<input name="password" type="password" /><br />
+	<input name="email" type="text" value="name@email.com" /><br />
+	<input name="password" type="password" value="mypassword" /><br />
 	<br />
 	<a class="login-button" href="#">Login</a>
 </form>
@@ -58,17 +58,17 @@ The following example shows how to create a highly-customized signup form.
 <form class="signup-form">
 	<div class="field-wrapper">
 		<label>Enter your email address</label>
-		<input name="email" type="text" />
+		<input name="email" type="text" value="name@email.com" />
 	</div>
 
 	<div class="field-wrapper">
 		<label>Enter your password</label>
-		<input name="password1" type="password" />
+		<input name="password1" type="password" value="mypassword" />
 	</div>
 
 	<div class="field-wrapper">
 		<label>Confirm your password</label>
-		<input name="password2" type="password" />
+		<input name="password2" type="password" value="mypassword" />
 	</div>
 	
 	<a class="signup-button" href="#">Create Account</a>
@@ -155,9 +155,9 @@ The `currentState` method is capable of generating lists of values if the name o
 ```html
 <form class="friends-form">
 	<label>Enter up to 3 names of your friends.</label>
-	<input name="friends[]" type="text" /><br />
-	<input name="friends[]" type="text" /><br />
-	<input name="friends[]" type="text" /><br />
+	<input name="friends[]" type="text" value="sally" /><br />
+	<input name="friends[]" type="text" value="jane" /><br />
+	<input name="friends[]" type="text" value="paul" /><br />
 	<br />
 	<a class="friends-button" href="#">Login</a>
 </form>
@@ -216,6 +216,84 @@ $('.ignored-button').click(function(e) {
 	// {
 	// 	city: 'Walnut Creek',
 	// 	state: 'CA'
+	// }
+});
+```
+
+## Using Selectors to Populate State
+
+Sometimes your form fields don't have `name` attributes, or the `name` attributes are formatted differently from how you would like your state object to be formatted.  FormHelper can also use selectors to retrieve field state.
+
+```html
+<form class="selector-form">
+	<input name="city" type="hidden" value="Laurys Station" />
+	<label>City</label><br />
+	<input class="city" type="text" value="Walnut Creek" /><br />
+	<label>State</label><br />
+	<input class="state" type="text" value="CA" /><br />
+	<button class="selector-button">Test</button>
+</form>
+```
+
+```javascript
+var selectorFormHelper = $('.selector-form').FormHelper({
+	fields: {
+		city: {
+			selector: '.city'
+		},
+		state: {
+			selector: '.state'
+		}
+	}
+});
+
+$('.selector-form .selector-button').click(function(e) {
+	e.preventDefault();
+
+	var state = selectorFormHelper.currentState();
+	
+	// state now contains a JSON representation of the form data:
+	// {
+	// 	city: 'Walnut Creek',
+	// 	state: 'CA'
+	// }
+});
+```
+
+This also works for arrays of values.
+
+```html
+<form class="selector-array-form">
+	<label>Enter up to 3 names of your friends.</label><br />
+	<input class="friend" type="text" value="Jane" /><br />
+	<input class="friend" type="text" value="Jake" /><br />
+	<input class="friend" type="text" value="Sally" /><br />
+	<button class="friends-button">Login</button>
+</form>
+```
+
+
+```javascript
+var selectorArrayHelper = $('.selector-array-form').FormHelper({
+	fields: {
+		friends: {
+			selector: '.friend'
+		}
+	}
+});
+
+$('.selector-array-form .friends-button').click(function(e) {
+	e.preventDefault();
+	
+	var state = selectorArrayHelper.currentState();
+	
+	// state now contains a JSON representation of the form data:
+	// {
+	// 	friends: [
+	// 		'Jane',
+	// 		'Jake',
+	// 		'Sally'
+	// 	]
 	// }
 });
 ```

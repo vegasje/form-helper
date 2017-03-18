@@ -315,11 +315,111 @@
 					}
 				});
 
-				$('.only-included-button').click(function(e) {
+				$('.only-included-form .only-included-button').click(function(e) {
 					e.preventDefault();
 					var state = onlyIncludedHelper.currentState();
 					
 					if (state.state || state.city !== $('.only-included-form [name="city"]').val()) {
+						$(this).parents('.example').addClass('error');
+						return;
+					}
+
+					$(this).parents('.example').removeClass('error').addClass('success');
+				});
+			});
+		</script>
+
+		<div class="example">
+			Example 7: Use Selectors to Get Field State
+			<form class="selector-form">
+				<input name="city" type="hidden" value="Laurys Station" />
+				<label>City</label><br />
+				<input class="city" type="text" value="Walnut Creek" /><br />
+				<label>State</label><br />
+				<input class="state" type="text" value="CA" /><br />
+				<button class="selector-button">Test</button>
+			</form>
+		</div>
+
+		<script>
+			$(function() {
+				var selectorFormHelper = $('.selector-form').FormHelper({
+					fields: {
+						city: {
+							selector: '.city'
+						},
+						state: {
+							selector: '.state'
+						}
+					}
+				});
+
+				$('.selector-form .selector-button').click(function(e) {
+					e.preventDefault();
+					var state = selectorFormHelper.currentState();
+					
+					if (state.city !== $('.selector-form .city').val() ||
+							state.state !== $('.selector-form .state').val()) {
+						$(this).parents('.example').addClass('error');
+						return;
+					}
+
+					$(this).parents('.example').removeClass('error').addClass('success');
+				});
+			});
+		</script>
+
+		<div class="example">
+			Example 8: Use Selectors to Get Field Array State
+			<form class="selector-array-form">
+				<label>Enter up to 3 names of your friends.</label><br />
+				<input class="friend" type="text" value="aaa" /><br />
+				<input class="friend" type="text" value="bbb" /><br />
+				<input class="friend" type="text" value="ccc" /><br />
+				<button class="friends-button">Login</button>
+			</form>
+		</div>
+
+		<script>
+			$(function() {
+				var selectorArrayHelper = $('.selector-array-form').FormHelper({
+					fields: {
+						friends: {
+							selector: '.friend'
+						}
+					}
+				});
+
+				$('.selector-array-form .friends-button').click(function(e) {
+					e.preventDefault();
+					var state = selectorArrayHelper.currentState();
+					var $friends = $('.selector-array-form .friend');
+
+					if (!state.friends || state.friends.length !== $friends.length) {
+						$(this).parents('.example').addClass('error');
+						return;
+					}
+
+					var success = true;
+
+					$friends.each(function() {
+						var $friend = $(this);
+						var found = false;
+
+						for (var i = 0; i < state.friends.length; i++) {
+							if (state.friends[i] === $friend.val()) {
+								found = true;
+								break;
+							}
+						}
+
+						if (!found) {
+							success = false;
+							return false;
+						}
+					});
+
+					if (!success) {
 						$(this).parents('.example').addClass('error');
 						return;
 					}
