@@ -239,16 +239,22 @@ Sometimes your form fields don't have `name` attributes, or the `name` attribute
 var selectorFormHelper = $('.selector-form').FormHelper({
 	fields: {
 		city: {
-			selector: '.city'
+			selector: '.city',
+			validate: [FormHelper.validations.notEmpty()]
 		},
 		state: {
-			selector: '.state'
+			selector: '.state',
+			validate: [FormHelper.validations.notEmpty()]
 		}
 	}
 });
 
 $('.selector-form .selector-button').click(function(e) {
 	e.preventDefault();
+
+	if (!selectorFormHelper.validate()) {
+		return;
+	}
 
 	var state = selectorFormHelper.currentState();
 	
@@ -277,7 +283,8 @@ This also works for arrays of values.
 var selectorArrayHelper = $('.selector-array-form').FormHelper({
 	fields: {
 		friends: {
-			selector: '.friend'
+			selector: '.friend',
+			validate: [FormHelper.validations.notEmpty()]
 		}
 	}
 });
@@ -285,6 +292,11 @@ var selectorArrayHelper = $('.selector-array-form').FormHelper({
 $('.selector-array-form .friends-button').click(function(e) {
 	e.preventDefault();
 	
+	if (!selectorArrayHelper.validate()) {
+		// Validation will fail if any of the friends are empty.
+		return;
+	}
+
 	var state = selectorArrayHelper.currentState();
 	
 	// state now contains a JSON representation of the form data:
