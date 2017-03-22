@@ -274,7 +274,7 @@ This also works for arrays of values.
 	<input class="friend" type="text" value="Jane" /><br />
 	<input class="friend" type="text" value="Jake" /><br />
 	<input class="friend" type="text" value="Sally" /><br />
-	<button class="friends-button">Login</button>
+	<button class="friends-button">Click Me</button>
 </form>
 ```
 
@@ -305,6 +305,76 @@ $('.selector-array-form .friends-button').click(function(e) {
 	// 		'Jane',
 	// 		'Jake',
 	// 		'Sally'
+	// 	]
+	// }
+});
+```
+
+## Building Custom State
+
+Sometimes your data won't always be in a form field. Element attributes, text, or even HTML might hold critical parts of your data that need to be included when constructing form state.  FormHelper supports this too.
+
+```html
+<div class="custom-state">
+	<span class="title">This is my title</span>
+	
+	<div class="notes">
+		<span data-id="1">Note 1</span><br />
+		<span data-id="2">Note 2</span>
+	</div>
+
+	<button>Test</button>
+</div>
+```
+
+```javascript
+var customStateHelper = $('.custom-state').FormHelper({
+	fields: {
+		title: {
+			state: function($parent) {
+				return $('.title', $parent).text();
+			},
+			validate: [FormHelper.validations.minLength(5)]
+		},
+		notes: {
+			state: function($parent) {
+				return $('.notes', $parent).children('span').map(function() {
+					var $this = $(this);
+					
+					return {
+						id: $this.attr('data-id'),
+						note: $this.text()
+					};
+				}).get();
+			},
+			validate: [FormHelper.validations.notEmpty()]
+		}
+	}
+});
+
+$('.custom-state button').click(function(e) {
+	e.preventDefault();
+	
+	if (!customStateHelper.validate()) {
+		// Validation is run against every data item returned from the state function.
+		// If the state function returns an array, validation is run against each item in the array.
+		return;
+	}
+
+	var state = customStateHelper.currentState();
+	
+	// state now contains a JSON representation of the form data:
+	// {
+	// 	title: 'This is my title',
+	// 	notes: [
+	// 		{
+	// 			id: '1',
+	// 			note: 'Note 1'
+	// 		},
+	// 		{
+	// 			id: '2',
+	// 			note: 'Note 2'
+	// 		}
 	// 	]
 	// }
 });

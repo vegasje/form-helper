@@ -433,5 +433,63 @@
 				});
 			});
 		</script>
+
+		<div class="example">
+			Example 9: Custom State Retrieval
+			<div class="custom-state">
+				<span class="title">This is my title</span>
+				
+				<div class="notes">
+					<span data-id="1">Note 1</span><br />
+					<span data-id="2">Note 2</span>
+				</div>
+
+				<button>Test</button>
+			</div>
+		</div>
+
+		<script>
+			$(function() {
+				var customStateHelper = $('.custom-state').FormHelper({
+					fields: {
+						title: {
+							state: function($parent) {
+								return $('.title', $parent).text();
+							},
+							validate: [FormHelper.validations.minLength(5)]
+						},
+						notes: {
+							state: function($parent) {
+								return $('.notes', $parent).children('span').map(function() {
+									var $this = $(this);
+									
+									return {
+										id: $this.attr('data-id'),
+										note: $this.text()
+									};
+								}).get();
+							},
+							validate: [FormHelper.validations.notEmpty()]
+						}
+					}
+				});
+
+				$('.custom-state button').click(function(e) {
+					e.preventDefault();
+					if (!customStateHelper.validate()) return;
+					var state = customStateHelper.currentState();
+
+					if (state.title !== 'This is my title' ||
+							state.notes.length !== 2 ||
+							state.notes[0].id !== '1' ||
+							state.notes[0].note !== 'Note 1') {
+						$(this).parents('.example').addClass('error');
+						return;
+					}
+
+					$(this).parents('.example').removeClass('error').addClass('success');
+				});
+			});
+		</script>
 	</body>
 </html>
