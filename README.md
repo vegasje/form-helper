@@ -331,14 +331,16 @@ Sometimes your data won't always be in a form field. Element attributes, text, o
 var customStateHelper = $('.custom-state').FormHelper({
 	fields: {
 		title: {
-			state: function($parent) {
-				return $('.title', $parent).text();
+			selector: '.title',
+			state: function($elem) {
+				return $elem.text();
 			},
 			validate: [FormHelper.validations.minLength(5)]
 		},
 		notes: {
-			state: function($parent) {
-				return $('.notes', $parent).children('span').map(function() {
+			selector: '.notes',
+			state: function($elem) {
+				return $elem.children('span').map(function() {
 					var $this = $(this);
 					
 					return {
