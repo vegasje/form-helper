@@ -348,8 +348,7 @@ var customStateHelper = $('.custom-state').FormHelper({
 						note: $this.text()
 					};
 				}).get();
-			},
-			validate: [FormHelper.validations.notEmpty()]
+			}
 		}
 	}
 });
@@ -381,6 +380,92 @@ $('.custom-state button').click(function(e) {
 	// }
 });
 ```
+
+## The Holy Grail: Nested State
+
+Let's face it:  Your state objects will sometimes have nested data, and it will often times make your configuration more readable if you aren't using `state` everywhere to build these nested data sets.  FormHelper can handle this with ease.
+
+```html
+<div class="nested-state">
+	<span class="title">This is my title</span>
+	
+	<div class="note">
+		<span data-id="1">Note 1</span><br />
+		<input type="text" value="Here is my first note" />
+	</div>
+
+	<div class="note">
+		<span data-id="2">Note 2</span>
+		<input type="text" value="Here is my second note" />
+	</div>
+
+	<button>Test</button>
+</div>
+```
+
+```javascript
+var nestedStateHelper = $('.nested-state').FormHelper({
+	fields: {
+		title: {
+			selector: '.title',
+			state: function($elem) {
+				return $elem.text();
+			},
+			validate: [FormHelper.validations.minLength(5)]
+		},
+		notes: {
+			selector: '.note',
+			fields: {
+				id: {
+					selector: 'span',
+					state: function($elem) {
+						return $elem.attr('data-id');
+					}
+				},
+				name: {
+					selector: 'span',
+					state: function($elem) {
+						return $elem.text();
+					}
+				},
+				content: {
+					selector: 'input',
+					validate: [FormHelper.validations.notEmpty()]
+				},
+			}
+		}
+	}
+});
+
+$('.nested-state button').click(function(e) {
+	e.preventDefault();
+	
+	if (!customStateHelper.validate()) {
+		return;
+	}
+
+	var state = customStateHelper.currentState();
+	
+	// state now contains a JSON representation of the form data:
+	// {
+	// 	title: 'This is my title',
+	// 	notes: [
+	// 		{
+	// 			id: '1',
+	// 			name: 'Note 1',
+	// 			content: 'This is my first note'
+	// 		},
+	// 		{
+	// 			id: '2',
+	// 			name: 'Note 2',
+	// 			content: 'This is my second note'
+	// 		}
+	// 	]
+	// }
+});
+```
+
+You can nest fields as deeply as you desire.  FormHelper will continue to walk through your field tree and build your state appropriately.
 
 ## Built-In Validations
 

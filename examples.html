@@ -13,90 +13,25 @@
 			.example {
 				margin-bottom: 30px;
 			}
+				.title {
+					font-weight: bold;
+				}
 		</style>
 
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
 		<script src="lib/form-helper.js"></script>
 	</head>
 
 	<body>
 		<div class="example">
-			Example 1: Simple Login Form
-			<form class="login-form">
-				<input name="email" type="text" value="aaaa" /><br />
-				<input name="password" type="password" value="bbbb" /><br />
-				<button class="login-button">Login</button>
-			</form>
-		</div>
+			<div class="title">Super Test</div>
 
-		<script>
-			$(function() {
-				var loginHelper = $('.login-form').FormHelper({
-					fields: {
-						email: {
-							validate: [FormHelper.validations.minLength(4)]
-						},
-						password: {
-							validate: [FormHelper.validations.minLength(4)]
-						}
-					}
-				});
+			<form class="supertest-form">
+				<div class="field-wrapper">
+					<input name="first_name" type="text" value="jeremy" />
+				</div>
 
-				$('.login-form .login-button').click(function(e) {
-					e.preventDefault();
-					if (!loginHelper.validate()) return;
-					var state = loginHelper.currentState();
-
-					if (state.email !== $('.login-form [name="email"]').val()) {
-						$(this).parents('.example').addClass('error');
-						return;
-					}
-
-					$(this).parents('.example').removeClass('error').addClass('success');
-				});
-			});
-		</script>
-
-		<div class="example">
-			Example 2: No Form Needed!
-			<div class="login-no-form">
-				<input name="email" type="text" value="aaaa" /><br />
-				<input name="password" type="password" value="bbbb" /><br />
-				<button class="login-button">Login</button>
-			</div>
-		</div>
-
-		<script>
-			$(function() {
-				var noFormLoginHelper = $('.login-no-form').FormHelper({
-					fields: {
-						email: {
-							validate: [FormHelper.validations.minLength(4)]
-						},
-						password: {
-							validate: [FormHelper.validations.minLength(4)]
-						}
-					}
-				});
-
-				$('.login-no-form .login-button').click(function(e) {
-					e.preventDefault();
-					if (!noFormLoginHelper.validate()) return;
-					var state = noFormLoginHelper.currentState();
-
-					if (state.email !== $('.login-no-form [name="email"]').val()) {
-						$(this).parents('.example').addClass('error');
-						return;
-					}
-
-					$(this).parents('.example').removeClass('error').addClass('success');
-				});
-			});
-		</script>
-
-		<div class="example">
-			Example 3: Custom Signup Form
-			<form class="signup-form">
 				<div class="field-wrapper">
 					<label>Enter your email address</label>
 					<input name="email" type="text" value="a@aaa.com" />
@@ -111,14 +46,70 @@
 					<label>Confirm your password</label>
 					<input name="password2" type="password" value="aaaa" />
 				</div>
+
+				Enter some words:
+				<div class="field-wrapper">
+					<input name="words[]" type="text" value="hello" />
+				</div>
+
+				<div class="field-wrapper">
+					<input name="words[]" type="text" value="world" />
+				</div>
+
+				<input class="ignored" name="ignored1" type="hidden" value="test ignore 1" />
+				<input class="ignored" name="ignored2" type="hidden" value="test ignore 2" />
+				<label>Country</label> <input name="country" value="USA" /><br />
+
+				<div class="notebook">
+					<span class="heading">This is my heading</span>
 				
-				<button class="signup-button">Create Account</button>
+					<div class="notes">
+						<span data-id="1">Note 1</span><br />
+						<span data-id="2">Note 2</span>
+					</div>
+				</div>
+
+				<div class="todo-list">
+					<div class="day">
+						<span class="name">Monday</span>
+						
+						<div class="todo">
+							<input class="description" type="text" value="groceries" />
+							<input class="completed" type="checkbox" checked="checked" />
+						</div>
+
+						<div class="todo">
+							<input class="description" type="text" value="laundry" />
+							<input class="completed" type="checkbox" />
+						</div>
+					</div>
+
+					<div class="day">
+						<span class="name">Tuesday</span>
+
+						<div class="todo">
+							<input class="description" type="text" value="shopping" />
+							<input class="completed" type="checkbox" />
+						</div>
+
+						<div class="todo">
+							<input class="description" type="text" value="dinner" />
+							<input class="completed" type="checkbox" checked="checked" />
+						</div>
+					</div>
+				</div>
+
+				top 10 <input class="included-option" type="checkbox" value="top 10" checked="checked" /><br />
+				all caps <input class="included-option" type="checkbox" value="all caps" /><br />
+				last year <input class="included-option" type="checkbox" value="last year" checked="checked" /><br />
+				
+				<button>Test</button>
 			</form>
 		</div>
 
 		<script>
 			$(function() {
-				var signupHelper = $('.signup-form').FormHelper({
+				var signupHelper = $('.supertest-form').FormHelper({
 					// The global `onFail` method runs whenever any field fails validation.
 					// `this` represents the field.
 					onFail: function() {
@@ -168,125 +159,123 @@
 								$('[name="password1"]').parent().removeClass('error');
 								$(this).parent().removeClass('error');
 							}
-						}
-					}
-				});
+						},
 
-				$('.signup-form .signup-button').click(function(e) {
-					e.preventDefault();
-					if (!signupHelper.validate()) return;
-					var state = signupHelper.currentState();
+						'words[]': {
+							validate: [FormHelper.validations.notEmpty()]
+						},
 
-					if (state.email !== $('.signup-form [name="email"]').val()) {
-						$(this).parents('.example').addClass('error');
-						return;
-					}
-
-					if (state.password1 !== $('.signup-form [name="password1"]').val()) {
-						$(this).parents('.example').addClass('error');
-						return;
-					}
-
-					if (state.password2 !== $('.signup-form [name="password2"]').val()) {
-						$(this).parents('.example').addClass('error');
-						return;
-					}
-
-					$(this).parents('.example').removeClass('error').addClass('success');
-				});
-			});
-		</script>
-
-		<div class="example">
-			Example 4: Friends Form With Array Values
-			<form class="friends-form">
-				<label>Enter up to 3 names of your friends.</label><br />
-				<input name="friends[]" type="text" value="aaa" /><br />
-				<input name="friends[]" type="text" value="bbb" /><br />
-				<input name="friends[]" type="text" value="ccc" /><br />
-				<button class="friends-button">Login</button>
-			</form>
-		</div>
-
-		<script>
-			$(function() {
-				var friendsHelper = $('.friends-form').FormHelper();
-
-				$('.friends-form .friends-button').click(function(e) {
-					e.preventDefault();
-					var state = friendsHelper.currentState();
-					var $friends = $('.friends-form [name="friends[]"]');
-
-					if (!state.friends || state.friends.length !== $friends.length) {
-						$(this).parents('.example').addClass('error');
-						return;
-					}
-
-					var success = true;
-
-					$friends.each(function() {
-						var $friend = $(this);
-						var found = false;
-
-						for (var i = 0; i < state.friends.length; i++) {
-							if (state.friends[i] === $friend.val()) {
-								found = true;
-								break;
+						notebook: {
+							selector: '.notebook',
+							fields: {
+								heading: {
+									selector: '.heading',
+									state: function($elem) {
+										return $elem.text();
+									},
+									validate: [FormHelper.validations.minLength(5)]
+								},
+								notes: {
+									selector: '.notes',
+									state: function($elem) {
+										return $elem.children('span').map(function() {
+											var $this = $(this);
+											
+											return {
+												id: $this.attr('data-id'),
+												note: $this.text()
+											};
+										}).get();
+									},
+									validate: [FormHelper.validations.notEmpty()]
+								}
 							}
+						},
+						todo_list: {
+							selector: '.todo-list',
+							fields: {
+								days: {
+									selector: '.day',
+									fields: {
+										name: {
+											selector: '.name',
+											state: function($elem) {
+												return $elem.text();
+											}
+										},
+										todos: {
+											selector: '.todo',
+											fields: {
+												description: {
+													selector: '.description',
+													validate: [FormHelper.validations.notEmpty()]
+												},
+												completed: {
+													selector: '.completed'
+												}
+											}
+										}
+									}
+								},
+							}
+						},
+						included_options: {
+							selector: '.included-option'
 						}
-
-						if (!found) {
-							success = false;
-							return false;
-						}
-					});
-
-					if (!success) {
-						$(this).parents('.example').addClass('error');
-						return;
-					}
-
-					$(this).parents('.example').removeClass('error').addClass('success');
-				});
-			});
-		</script>
-
-		<div class="example">
-			Example 5: Ignoring Form Fields
-			<form class="ignored-form">
-				<input class="ignored" name="ignored1" type="hidden" value="test ignore 1" />
-				<input class="ignored" name="ignored2" type="hidden" value="test ignore 2" />
-				<label>City</label> <input name="city" value="Walnut Creek" /><br />
-				<label>State</label> <input name="state" value="CA" /><br />
-				<label>Country</label> <input name="country" value="USA" /><br />
-				<button class="ignored-button">Test</button>
-			</form>
-		</div>
-
-		<script>
-			$(function() {
-				var ignoredHelper = $('.ignored-form').FormHelper({
+					},
 					ignored: [
 						{ selector: '.ignored' },
 						'country'
 					]
 				});
 
-				$('.ignored-form .ignored-button').click(function(e) {
+				$('.supertest-form button').click(function(e) {
 					e.preventDefault();
-					var state = ignoredHelper.currentState();
+					if (!signupHelper.validate()) return;
+					var state = signupHelper.currentState();
+					console.log(state);
+
+					if (state.first_name !== $('.supertest-form [name="first_name"]').val()) {
+						$(this).parents('.example').addClass('error');
+						return;
+					}
+
+					if (state.email !== $('.supertest-form [name="email"]').val()) {
+						$(this).parents('.example').addClass('error');
+						return;
+					}
+
+					if (state.password1 !== $('.supertest-form [name="password1"]').val()) {
+						$(this).parents('.example').addClass('error');
+						return;
+					}
+
+					if (state.password2 !== $('.supertest-form [name="password2"]').val()) {
+						$(this).parents('.example').addClass('error');
+						return;
+					}
+
+					if (!Array.isArray(state.words) || state.words.length !== 2) {
+						$(this).parents('.example').addClass('error');
+						return;
+					}
 
 					if (state.ignored1 || state.ignored2 || state.country) {
 						$(this).parents('.example').addClass('error');
 						return;
 					}
 
-					if (state.city !== $('.ignored-form [name="city"]').val()) {
+					if (!state.notebook ||
+							state.notebook.heading !== 'This is my heading' ||
+							state.notebook.notes.length !== 2 ||
+							state.notebook.notes[0].id !== '1' ||
+							state.notebook.notes[0].note !== 'Note 1') {
 						$(this).parents('.example').addClass('error');
 						return;
 					}
 
-					if (state.state !== $('.ignored-form [name="state"]').val()) {
+					if (!state.included_options ||
+							state.included_options.length !== $('.included-option:checked').length) {
 						$(this).parents('.example').addClass('error');
 						return;
 					}
@@ -297,7 +286,8 @@
 		</script>
 
 		<div class="example">
-			Example 6: State Only Includes Configured Fields
+			<div class="title">State Only Includes Configured Fields</div>
+
 			<form class="only-included-form">
 				<input name="city" type="text" value="aaaa" /><br />
 				<input name="state" type="text" value="bbbb" /><br />
@@ -330,13 +320,17 @@
 		</script>
 
 		<div class="example">
-			Example 7: Use Selectors Instead of Field Names
+			<div class="title">Single-Level, Selectors</div>
+
 			<form class="selector-form">
 				<input name="city" type="hidden" value="Laurys Station" />
 				<label>City</label><br />
 				<input class="city" type="text" value="Walnut Creek" /><br />
 				<label>State</label><br />
 				<input class="state" type="text" value="CA" /><br />
+				<label>Words</label><br />
+				<input class="word" type="text" value="hello" /><br />
+				<input class="word" type="text" value="world" /><br />
 				<button class="selector-button">Test</button>
 			</form>
 		</div>
@@ -352,6 +346,10 @@
 						state: {
 							selector: '.state',
 							validate: [FormHelper.validations.notEmpty()]
+						},
+						words: {
+							selector: '.word',
+							validate: [FormHelper.validations.notEmpty()]
 						}
 					}
 				});
@@ -362,7 +360,9 @@
 					var state = selectorFormHelper.currentState();
 					
 					if (state.city !== $('.selector-form .city').val() ||
-							state.state !== $('.selector-form .state').val()) {
+							state.state !== $('.selector-form .state').val() ||
+							!Array.isArray(state.words) ||
+							state.words.length !== 2) {
 						$(this).parents('.example').addClass('error');
 						return;
 					}
@@ -372,59 +372,47 @@
 			});
 		</script>
 
-		<div class="example">
-			Example 8: Use Selectors for Field Arrays
-			<form class="selector-array-form">
-				<label>Enter up to 3 names of your friends.</label><br />
-				<input class="friend" type="text" value="aaa" /><br />
-				<input class="friend" type="text" value="bbb" /><br />
-				<input class="friend" type="text" value="ccc" /><br />
-				<button class="friends-button">Login</button>
-			</form>
+		<div class="example nested-names">
+			<div class="title">Nested, Field Names</div>
+
+			<div class="address-item">
+				Street: <input name="street" type="text" value="street1" /><br />
+				City: <input name="city" type="text" value="city1" /><br />
+			</div>
+
+			<div class="address-item">
+				Street: <input name="street" type="text" value="street2" /><br />
+				City: <input name="city" type="text" value="city2" />
+			</div>
+
+			<button>Test</button>
 		</div>
 
 		<script>
 			$(function() {
-				var selectorArrayHelper = $('.selector-array-form').FormHelper({
+				var nestedNamesHelper = $('.nested-names').FormHelper({
 					fields: {
-						friends: {
-							selector: '.friend',
-							validate: [FormHelper.validations.notEmpty()]
-						}
-					}
-				});
+						addresses: {
+							selector: '.address-item',
+							fields: {
+								street: {
+									validate: [FormHelper.validations.minLength(5)]
+								},
 
-				$('.selector-array-form .friends-button').click(function(e) {
-					e.preventDefault();
-					if (!selectorArrayHelper.validate()) return;
-					var state = selectorArrayHelper.currentState();
-					var $friends = $('.selector-array-form .friend');
-
-					if (!state.friends || state.friends.length !== $friends.length) {
-						$(this).parents('.example').addClass('error');
-						return;
-					}
-
-					var success = true;
-
-					$friends.each(function() {
-						var $friend = $(this);
-						var found = false;
-
-						for (var i = 0; i < state.friends.length; i++) {
-							if (state.friends[i] === $friend.val()) {
-								found = true;
-								break;
+								city: {
+									validate: [FormHelper.validations.minLength(2)]
+								}
 							}
 						}
+					}
+				});
 
-						if (!found) {
-							success = false;
-							return false;
-						}
-					});
-
-					if (!success) {
+				$('.nested-names button').click(function(e) {
+					e.preventDefault();
+					if (!nestedNamesHelper.validate()) return;
+					var state = nestedNamesHelper.currentState();
+					
+					if (state.addresses.length !== 2) {
 						$(this).parents('.example').addClass('error');
 						return;
 					}
@@ -434,57 +422,111 @@
 			});
 		</script>
 
-		<div class="example">
-			Example 9: Custom State Retrieval
-			<div class="custom-state">
-				<span class="title">This is my title</span>
-				
-				<div class="notes">
-					<span data-id="1">Note 1</span><br />
-					<span data-id="2">Note 2</span>
-				</div>
+		<div class="example nested-selectors">
+			<div class="title">Nested, Selectors</div>
 
-				<button>Test</button>
+			<div class="address-item">
+				Street: <input class="street" type="text" value="street1" /><br />
+				City: <input class="city" type="text" value="city1" /><br />
 			</div>
+
+			<div class="address-item">
+				Street: <input class="street" type="text" value="street2" /><br />
+				City: <input class="city" type="text" value="city2" />
+			</div>
+
+			<button>Test</button>
 		</div>
 
 		<script>
 			$(function() {
-				var customStateHelper = $('.custom-state').FormHelper({
+				var nestedHelper = $('.nested-selectors').FormHelper({
 					fields: {
-						title: {
-							selector: '.title',
-							state: function($elem) {
-								return $elem.text();
-							},
-							validate: [FormHelper.validations.minLength(5)]
-						},
-						notes: {
-							selector: '.notes',
-							state: function($elem) {
-								return $elem.children('span').map(function() {
-									var $this = $(this);
-									
-									return {
-										id: $this.attr('data-id'),
-										note: $this.text()
-									};
-								}).get();
-							},
-							validate: [FormHelper.validations.notEmpty()]
+						addresses: {
+							selector: '.address-item',
+							fields: {
+								street: {
+									selector: '.street',
+									validate: [FormHelper.validations.minLength(5)]
+								},
+
+								city: {
+									selector: '.city',
+									validate: [FormHelper.validations.minLength(2)]
+								}
+							}
 						}
 					}
 				});
 
-				$('.custom-state button').click(function(e) {
+				$('.nested-selectors button').click(function(e) {
 					e.preventDefault();
-					if (!customStateHelper.validate()) return;
-					var state = customStateHelper.currentState();
+					if (!nestedHelper.validate()) return;
+					var state = nestedHelper.currentState();
+					
+					if (state.addresses.length !== 2) {
+						$(this).parents('.example').addClass('error');
+						return;
+					}
 
-					if (state.title !== 'This is my title' ||
-							state.notes.length !== 2 ||
-							state.notes[0].id !== '1' ||
-							state.notes[0].note !== 'Note 1') {
+					$(this).parents('.example').removeClass('error').addClass('success');
+				});
+			});
+		</script>
+
+		<div class="example nested-fields-state">
+			<div class="title">Nested, Custom State</div>
+
+			<div class="selected-emotions">
+				<div class="selected-emotion-item">
+					<span class="emotion-name">Happy</span>
+					<span style="display: none;" class="emotion-id">1</span>
+				</div>
+
+				<div class="selected-emotion-item">
+					<span class="emotion-name">Angry</span>
+					<span style="display: none;" class="emotion-id">3</span>
+				</div>
+			</div>
+
+			<button>Test</button>
+		</div>
+
+		<script>
+			$(function() {
+				var nestedStateHelper = $('.selected-emotions').FormHelper({
+					fields: {
+						emotions: {
+							selector: '.selected-emotion-item',
+							fields: {
+								id: {
+									selector: '.emotion-id',
+									state: function($elem) {
+										return $elem.text();
+									}
+								},
+								name: {
+									selector: '.emotion-name',
+									state: function($elem) {
+										return $elem.text();
+									}
+								}
+							},
+							validate: [
+								function(value) {
+									return (value.id && value.name);
+								}
+							]
+						}
+					}
+				});
+
+				$('.nested-fields-state button').click(function(e) {
+					e.preventDefault();
+					if (!nestedStateHelper.validate()) return;
+					var state = nestedStateHelper.currentState();
+					
+					if (state.emotions.length !== 2) {
 						$(this).parents('.example').addClass('error');
 						return;
 					}
