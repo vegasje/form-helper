@@ -467,6 +467,74 @@ $('.nested-state button').click(function(e) {
 
 You can nest fields as deeply as you desire.  FormHelper will continue to walk through your field tree and build your state appropriately.
 
+## Validating Individual Fields
+
+It is frequently required that fields validate immediately after their value changes.  This differs from how FormHelper traditionally works, as you wouldn't necessarily want to validate the entire form when a single field's value changes.  To solve this problem, FormHelper allows you to pass an individual field into the `validate` method.
+
+```html
+<div class="on-demand-validation">
+	Name: <input type="text" name="name" /><br />
+	Age: <input type="text" name="age" /><br />
+	Email: <input type="text" name="email" /><br />
+
+	<div class="nested">
+		<textarea name="area">This will not validate if the text contains &quot;42&quot;</textarea>
+	</div>
+
+	<button>Get State</button>
+</div>
+```
+
+```javascript
+$(function() {
+	var onDemandHelper = $('.on-demand-validation').FormHelper({
+		fields: {
+			name: {
+				validate: [FormHelper.validations.notEmpty()]
+			},
+			age: {
+				validate: [FormHelper.validations.isNumeric()]
+			},
+			email: {
+				validate: [
+					function(value) {
+						return (value.indexOf('@') !== -1);
+					}
+				]
+			},
+			nested: {
+				selector: '.nested',
+				fields: {
+					area: {
+						validate: [
+							function(value) {
+								return (value.indexOf('42') === -1);
+							}
+						]
+					}
+				}
+			}
+		}
+	});
+
+	$('.on-demand-validation input').change(function(e) {
+		onDemandHelper.validate(onDemandHelper.settings.fields[e.target.name]);
+	});
+});
+```
+
+In the above example, the `input` fields will validate whenever their values change.
+
+As expected, this also works with nested fields:
+
+```javascript
+$('.on-demand-validation textarea').change(function(e) {
+	onDemandHelper.validate(onDemandHelper.settings.fields.nested.fields.area);
+});
+```
+
+As you can see, FormHelper allows you to walk down through the configured settings to reach whichever field you would like to validate.
+
 ## Built-In Validations
 
 ### `notEmpty()`

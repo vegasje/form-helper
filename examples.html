@@ -535,5 +535,66 @@
 				});
 			});
 		</script>
+
+		<div class="example on-demand-validation">
+			<div class="title">On-demand Validation</div>
+
+			Name: <input type="text" name="name" /><br />
+			Age: <input type="text" name="age" /><br />
+			Email: <input type="text" name="email" /><br />
+			
+			<div class="nested">
+				<textarea name="area">This will not validate if the text contains &quot;42&quot;</textarea>
+			</div>
+
+			<button>Get State</button>
+		</div>
+
+		<script>
+			$(function() {
+				var onDemandHelper = $('.on-demand-validation').FormHelper({
+					fields: {
+						name: {
+							validate: [FormHelper.validations.notEmpty()]
+						},
+						age: {
+							validate: [FormHelper.validations.isNumeric()]
+						},
+						email: {
+							validate: [
+								function(value) {
+									return (value.indexOf('@') !== -1);
+								}
+							]
+						},
+						nested: {
+							selector: '.nested',
+							fields: {
+								area: {
+									validate: [
+										function(value) {
+											return (value.indexOf('42') === -1);
+										}
+									]
+								}
+							}
+						}
+					}
+				});
+
+				$('.on-demand-validation input').change(function(e) {
+					onDemandHelper.validate(onDemandHelper.settings.fields[e.target.name]);
+				});
+
+				$('.on-demand-validation textarea').change(function(e) {
+					onDemandHelper.validate(onDemandHelper.settings.fields.nested.fields.area);
+				});
+
+				$('.on-demand-validation button').click(function(e) {
+					e.preventDefault();
+					console.log(onDemandHelper.currentState());
+				});
+			});
+		</script>
 	</body>
 </html>
