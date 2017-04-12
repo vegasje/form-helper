@@ -518,7 +518,7 @@ $(function() {
 	});
 
 	$('.on-demand-validation input').change(function(e) {
-		onDemandHelper.validate(onDemandHelper.settings.fields[e.target.name]);
+		onDemandHelper.fields[e.target.name].validate();
 	});
 });
 ```
@@ -529,7 +529,7 @@ As expected, this also works with nested fields:
 
 ```javascript
 $('.on-demand-validation textarea').change(function(e) {
-	onDemandHelper.validate(onDemandHelper.settings.fields.nested.fields.area);
+	onDemandHelper.fields.nested.area.validate();
 });
 ```
 

@@ -583,11 +583,11 @@
 				});
 
 				$('.on-demand-validation input').change(function(e) {
-					onDemandHelper.validate(onDemandHelper.settings.fields[e.target.name]);
+					onDemandHelper.fields[e.target.name].validate();
 				});
 
 				$('.on-demand-validation textarea').change(function(e) {
-					onDemandHelper.validate(onDemandHelper.settings.fields.nested.fields.area);
+					onDemandHelper.fields.nested.area.validate();
 				});
 
 				$('.on-demand-validation button').click(function(e) {
