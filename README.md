@@ -70,7 +70,7 @@ The following example shows how to create a highly-customized signup form.
 		<label>Confirm your password</label>
 		<input name="password2" type="password" value="mypassword" />
 	</div>
-	
+
 	<a class="signup-button" href="#">Create Account</a>
 </form>
 ```
@@ -209,7 +209,7 @@ var ignoredFormHelper = $('.ignored-form').FormHelper({
 
 $('.ignored-button').click(function(e) {
 	e.preventDefault();
-	
+
 	var state = ignoredFormHelper.currentState();
 
 	// state now contains a JSON representation of the form data:
@@ -257,7 +257,7 @@ $('.selector-form .selector-button').click(function(e) {
 	}
 
 	var state = selectorFormHelper.currentState();
-	
+
 	// state now contains a JSON representation of the form data:
 	// {
 	// 	city: 'Walnut Creek',
@@ -291,14 +291,14 @@ var selectorArrayHelper = $('.selector-array-form').FormHelper({
 
 $('.selector-array-form .friends-button').click(function(e) {
 	e.preventDefault();
-	
+
 	if (!selectorArrayHelper.validate()) {
 		// Validation will fail if any of the friends are empty.
 		return;
 	}
 
 	var state = selectorArrayHelper.currentState();
-	
+
 	// state now contains a JSON representation of the form data:
 	// {
 	// 	friends: [
@@ -310,6 +310,41 @@ $('.selector-array-form .friends-button').click(function(e) {
 });
 ```
 
+## Being Explicit
+
+If you don't want FormHelper to actively search out state in your form, and only rely on the config that has been passed into it, you can provide the `explicitState` configuration option.
+
+In the following example, the two hidden fields will be ignored even though we have not included them in the `ignored` configuration option array.  `explicitState` allows us to only fetch and validate state for explicitly defined fields.
+
+```html
+<form class="ignored-form">
+	<input name="ignored1" type="hidden" value="test ignore 1" />
+	<input name="ignored2" type="hidden" value="test ignore 2" />
+	<label>City</label><br />
+	<input class="city" type="text" value="Walnut Creek" /><br />
+	<label>State</label><br />
+	<input class="state" type="text" value="CA" /><br />
+	<button class="explicit-button">Test</button>
+</form>
+```
+
+```javascript
+var explicitFormHelper = $('.explicit-form').FormHelper({
+	explicitState: true,
+
+	fields: {
+		city: {
+			selector: '.city',
+			validate: [FormHelper.validations.notEmpty()]
+		},
+		state: {
+			selector: '.state',
+			validate: [FormHelper.validations.notEmpty()]
+		}
+	}
+});
+```
+
 ## Building Custom State
 
 Sometimes your data won't always be in a form field. Element attributes, text, or even HTML might hold critical parts of your data that need to be included when constructing form state.  FormHelper supports this too.
@@ -317,7 +352,7 @@ Sometimes your data won't always be in a form field. Element attributes, text, o
 ```html
 <div class="custom-state">
 	<span class="title">This is my title</span>
-	
+
 	<div class="notes">
 		<span data-id="1">Note 1</span><br />
 		<span data-id="2">Note 2</span>
@@ -342,7 +377,7 @@ var customStateHelper = $('.custom-state').FormHelper({
 			state: function($elem) {
 				return $elem.children('span').map(function() {
 					var $this = $(this);
-					
+
 					return {
 						id: $this.attr('data-id'),
 						note: $this.text()
@@ -355,7 +390,7 @@ var customStateHelper = $('.custom-state').FormHelper({
 
 $('.custom-state button').click(function(e) {
 	e.preventDefault();
-	
+
 	if (!customStateHelper.validate()) {
 		// Validation is run against every data item returned from the state function.
 		// If the state function returns an array, validation is run against each item in the array.
@@ -363,7 +398,7 @@ $('.custom-state button').click(function(e) {
 	}
 
 	var state = customStateHelper.currentState();
-	
+
 	// state now contains a JSON representation of the form data:
 	// {
 	// 	title: 'This is my title',
@@ -388,7 +423,7 @@ Let's face it:  Your state objects will sometimes have nested data, and it will 
 ```html
 <div class="nested-state">
 	<span class="title">This is my title</span>
-	
+
 	<div class="note">
 		<span data-id="1">Note 1</span><br />
 		<input type="text" value="Here is my first note" />
@@ -439,13 +474,13 @@ var nestedStateHelper = $('.nested-state').FormHelper({
 
 $('.nested-state button').click(function(e) {
 	e.preventDefault();
-	
+
 	if (!customStateHelper.validate()) {
 		return;
 	}
 
 	var state = customStateHelper.currentState();
-	
+
 	// state now contains a JSON representation of the form data:
 	// {
 	// 	title: 'This is my title',
